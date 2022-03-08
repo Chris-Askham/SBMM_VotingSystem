@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E60577AC-E9BA-4CFF-BFF5-65C768F0C274}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SBMMVotingSystem</RootNamespace>
+    <AssemblyName>SBMMVotingSystem</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Dapper.2.0.123\lib\net461\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.115.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CustomControls\CustomComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\CustomMessageBox\CMessageBox.cs" />
+    <Compile Include="CustomControls\CustomMessageBox\CustomMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomControls\CustomMessageBox\CustomMessageBox.Designer.cs">
+      <DependentUpon>CustomMessageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\CustomRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\DropdownMenus\CusDropdownMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\DropdownMenus\MenuColourTable.cs" />
+    <Compile Include="CustomControls\DropdownMenus\MenuRenderer.cs" />
+    <Compile Include="CustomControls\RoundedButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\RoundedTextbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\RoundedTextbox.Designer.cs">
+      <DependentUpon>RoundedTextbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\ToggleButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DAL\ISQLAccessLayer.cs" />
+    <Compile Include="DAL\SQLAccessLayer.cs" />
+    <Compile Include="Forms\frmMainGui.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmMainGui.Designer.cs">
+      <DependentUpon>frmMainGui.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucUserNavForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucUserNavForm.Designer.cs">
+      <DependentUpon>ucUserNavForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucRegisterNewUser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucRegisterNewUser.Designer.cs">
+      <DependentUpon>ucRegisterNewUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucUsersManagementForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucUsersManagementForm.Designer.cs">
+      <DependentUpon>ucUsersManagementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingManagementForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingManagementForm.Designer.cs">
+      <DependentUpon>ucVotingManagementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingSetupForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingSetupForm.Designer.cs">
+      <DependentUpon>ucVotingSetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingSummary.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingSummary.Designer.cs">
+      <DependentUpon>ucVotingSummary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Managers\AddressManager.cs" />
+    <Compile Include="Forms\SubForms\ucUserLoginForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucUserLoginForm.Designer.cs">
+      <DependentUpon>ucUserLoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucMainUserForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucMainUserForm.Designer.cs">
+      <DependentUpon>ucMainUserForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubForms\ucVotingForm.Designer.cs">
+      <DependentUpon>ucVotingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Managers\ErrorManager.cs" />
+    <Compile Include="Managers\UserAuditManager.cs" />
+    <Compile Include="Managers\UserManager.cs" />
+    <Compile Include="Managers\VotingManager.cs" />
+    <Compile Include="Models\AddressDBModel.cs" />
+    <Compile Include="Models\ErrorLogDBModel.cs" />
+    <Compile Include="Models\SummaryChartViewModel.cs" />
+    <Compile Include="Models\SuperUserViewModel.cs" />
+    <Compile Include="Models\UserAuditDBModel.cs" />
+    <Compile Include="Models\UserDBModel.cs" />
+    <Compile Include="Models\VoteDBModel.cs" />
+    <Compile Include="Models\VoteSelectionViewModel.cs" />
+    <Compile Include="Models\VotingInstanceViewModel.cs" />
+    <Compile Include="Models\VotingOptionDBModel.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CustomControls\CustomMessageBox\CustomMessageBox.resx">
+      <DependentUpon>CustomMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\RoundedTextbox.resx">
+      <DependentUpon>RoundedTextbox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmMainGui.resx">
+      <DependentUpon>frmMainGui.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucUserLoginForm.resx">
+      <DependentUpon>ucUserLoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucUserNavForm.resx">
+      <DependentUpon>ucUserNavForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucRegisterNewUser.resx">
+      <DependentUpon>ucRegisterNewUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucMainUserForm.resx">
+      <DependentUpon>ucMainUserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucUsersManagementForm.resx">
+      <DependentUpon>ucUsersManagementForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucVotingForm.resx">
+      <DependentUpon>ucVotingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucVotingManagementForm.resx">
+      <DependentUpon>ucVotingManagementForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucVotingSetupForm.resx">
+      <DependentUpon>ucVotingSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubForms\ucVotingSummary.resx">
+      <DependentUpon>ucVotingSummary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="DAL\SBMMVotingDatabase.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DAL\SBMMVotingUnitTestDatabase.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="msvcr100.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\Debug.ico" />
+    <None Include="Resources\Cancel icon.png" />
+    <None Include="Resources\Hand Cursor icon.png" />
+    <None Include="Resources\Info icon.png" />
+    <None Include="Resources\Ok icon.png" />
+    <None Include="Resources\Services icon.png" />
+    <None Include="Resources\chat.png" />
+    <None Include="Resources\error.png" />
+    <None Include="Resources\exclamation.png" />
+    <None Include="Resources\information.png" />
+    <None Include="Resources\question.png" />
+    <None Include="Resources\Close Window icon.png" />
+    <None Include="Resources\Maximize Window icon.png" />
+    <None Include="Resources\Menu icon.png" />
+    <None Include="Resources\Minimize Window icon 2.png" />
+    <None Include="Resources\en_flag_out.png" />
+    <None Include="Resources\en_flag_down.png" />
+    <None Include="Resources\fr_flag_down.png" />
+    <None Include="Resources\fr_flag_out.png" />
+    <None Include="Resources\es_flag_down.png" />
+    <None Include="Resources\es_flag_out.png" />
+    <Content Include="SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
+  </Target>
+  <Import Project="packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+</Project>
