@@ -66,58 +66,23 @@ namespace SBMMVotingSystem.Forms.SubForms
 
                 // Create the chart
                 // ----------------
-                chtVotingInstanceSummary.Titles.Add("Votes for " + results.VotingInstance.VIName);
-
-                if (results != null)
-                {
-                    int voteCount = 0;
-
-                    // Add series
-                    // ----------
-                    chtVotingInstanceSummary.Series.Clear();
-                    for (int i = 0; i < results.ResultsForOption.Count; i++)
-                    {
-                        System.Windows.Forms.DataVisualization.Charting.Series series = chtVotingInstanceSummary.Series.Add(results.ResultsForOption[i].VOName);
-                        series.Points.Add(results.ResultsForOption[i].NumberOfVotes);
-                        voteCount += results.ResultsForOption[i].NumberOfVotes;
-                    }
-                    chtVotingInstanceSummary.Visible = true;
-                    lblTotalnumberOfVotesText.Text = voteCount.ToString();
-                }
+                CreateChart(results);
 
                 // Create the grid - Setup the columns
                 // -----------------------------------
-                grdVotesByArea.Columns[0].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_City");
-                grdVotesByArea.Columns[1].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_VOName");
-                grdVotesByArea.Columns[2].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_NumberOfVotes");
-
-                // Add the data rows
-                // -----------------
-                foreach (SummaryForAreaViewModel thisOption in results.ResultsForArea)
-                {
-                    string[] row = { thisOption.City, thisOption.VOName, thisOption.NumberOfVotesPerCity.ToString() };
-                    grdVotesByArea.Rows.Add(row);
-                }
+                CreateResultsGrid(results);
 
                 // Load the detail fields 
                 // ----------------------
-                cboVotingInstanceDDList.SelectedItem = results.VotingInstance.VotingInstanceId;
-                lblElectionNameText.Text = results.VotingInstance.VIName;
-                lblDescriptionText.Text = results.VotingInstance.VIDescription;
-                lblAddressText.Text = $"{results.VotingInstance.Address.AddressLine1 ?? String.Empty} \n\r " +
-                                            $"{results.VotingInstance.Address.AddressLine2 ?? String.Empty} \n\r " +
-                                            $"{results.VotingInstance.Address.City ?? String.Empty} \n\r " +
-                                            $"{results.VotingInstance.Address.Country ?? String.Empty} \n\r " +
-                                            $"{results.VotingInstance.Address.Postcode ?? String.Empty}";
-                chtVotingInstanceSummary.Visible = true;
-                radVotesByOption.Checked = true;
+                SetVotingInstanceDetails(results);
+
+                if(results.VotingInstance.CurrentlyInUse == 0)
+                {
+                    lblWinner.Visible = true;
+
+                    CalculatedTheWinner(results);
+                }
             }
-        }
-
-
-        private void lstVotesByCity_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-
         }
 
         /// <summary>
@@ -147,6 +112,7 @@ namespace SBMMVotingSystem.Forms.SubForms
         {
             chtVotingInstanceSummary.Visible = false;
             grdVotesByArea.Visible = false;
+            lblWinner.Visible = false;
 
             LoadVotingInstanceDDListData();
         }
@@ -181,6 +147,96 @@ namespace SBMMVotingSystem.Forms.SubForms
             }
 
             cboVotingInstanceDDList.Enabled = _ThisMainGui._ThisVotingManager._allVotingInstances.Count > 0;
+        }
+
+        /// <summary>
+        /// Create the chart and populate the data 
+        /// </summary>
+        /// <param name="results">Results for this election</param>
+        private void CreateChart(SummaryExportModel results)
+        {
+            chtVotingInstanceSummary.Titles.Clear();
+            chtVotingInstanceSummary.Titles.Add("Votes for " + results.VotingInstance.VIName);
+
+            if (results != null)
+            {
+                int voteCount = 0;
+
+                // Add series
+                // ----------
+                chtVotingInstanceSummary.Series.Clear();
+                for (int i = 0; i < results.ResultsForOption.Count; i++)
+                {
+                    System.Windows.Forms.DataVisualization.Charting.Series series = chtVotingInstanceSummary.Series.Add(results.ResultsForOption[i].VOName);
+                    series.Points.Add(results.ResultsForOption[i].NumberOfVotes);
+                    voteCount += results.ResultsForOption[i].NumberOfVotes;
+                }
+                chtVotingInstanceSummary.Visible = true;
+                lblTotalnumberOfVotesText.Text = voteCount.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Create the grid and populate the data 
+        /// </summary>
+        /// <param name="results">Results for this election</param>
+        private void CreateResultsGrid (SummaryExportModel results)
+        {
+            grdVotesByArea.Rows.Clear();
+
+            grdVotesByArea.Columns[0].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_City");
+            grdVotesByArea.Columns[1].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_VOName");
+            grdVotesByArea.Columns[2].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_NumberOfVotes");
+
+            // Add the data rows
+            // -----------------
+            foreach (SummaryForAreaViewModel thisOption in results.ResultsForArea)
+            {
+                string[] row = { thisOption.City, thisOption.VOName, thisOption.NumberOfVotesPerCity.ToString() };
+                grdVotesByArea.Rows.Add(row);
+            }
+        }
+
+        /// <summary>
+        /// Populate the election details 
+        /// </summary>
+        /// <param name="results">Results for this election</param>
+        private void SetVotingInstanceDetails(SummaryExportModel results)
+        {
+            cboVotingInstanceDDList.SelectedItem = results.VotingInstance.VotingInstanceId;
+            lblElectionNameText.Text = results.VotingInstance.VIName;
+            lblDescriptionText.Text = results.VotingInstance.VIDescription;
+            lblAddressText.Text = $"{results.VotingInstance.Address.AddressLine1 ?? String.Empty} \n\r " +
+                                        $"{results.VotingInstance.Address.AddressLine2 ?? String.Empty} \n\r " +
+                                        $"{results.VotingInstance.Address.City ?? String.Empty} \n\r " +
+                                        $"{results.VotingInstance.Address.Country ?? String.Empty} \n\r " +
+                                        $"{results.VotingInstance.Address.Postcode ?? String.Empty}";
+            chtVotingInstanceSummary.Visible = true;
+            radVotesByOption.Checked = true;
+        }
+
+        /// <summary>
+        /// Calculate the winner for this election
+        /// </summary>
+        /// <param name="results">Results for this election</param>
+        private void CalculatedTheWinner(SummaryExportModel results)
+        {
+            string winnerName = string.Empty;
+            switch (results.VotingInstance.VIVotingMode)
+            {
+                case VotingManager.VotingMode.FirstPassedThePost:
+                    var firstPassedThePostGroup = results.ResultsForOption.GroupBy(f => f.VotedForOptionId).ToList();
+
+
+                    var thiswinnerName = firstPassedThePostGroup.OrderByDescending(list => list.Count()).First();
+                    break;
+                case VotingManager.VotingMode.SingleTransferableVote:
+                    break;
+                case VotingManager.VotingMode.SupplementaryVote:
+                    break;
+                default:
+                    break;
+            }
         }
         #endregion
 

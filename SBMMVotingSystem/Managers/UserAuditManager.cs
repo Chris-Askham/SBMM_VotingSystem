@@ -78,33 +78,41 @@ namespace SBMMVotingSystem.Managers
         /// voted for the specified election
         /// </summary>
         /// <returns>True if the user has already voted, else false</returns>
-        internal bool HasUserAlreadyVoted(int userId)
+        internal bool HasUserAlreadyVoted(int userId, List<VotingInstanceViewModel> allElections)
         {
-            bool userHasAlreadyVoted = false;
+            bool userHasAlreadyVoted = true;
 
-            //try
-            //{
-            //    string query = @"SELECT * FROM [UserAuditLog] WHERE [UserId] = @UserId AND [VotingInstanceId] = @VotingInstanceId AND [AuditType] = @AuditType";
+            try
+            {
+                string query = @"SELECT * FROM [UserAuditLog] WHERE [UserId] = @UserId AND [AuditType] = @AuditType";
 
-            //    var parameters = new DynamicParameters();
-            //    parameters.Add("@UserId", userId);
-            //    parameters.Add("@VotingInstanceId", votingInstanceId);
-            //    parameters.Add("@AuditType", "NewVote");
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                parameters.Add("@AuditType", "NewVote");
 
-            //    // Execute the SQL query
-            //    // ---------------------
-            //    UserAuditDBModel loggedMessage = _ThisSQLAccessLayer.GetUserAudits(null, query, parameters);
+                // Execute the SQL query
+                // ---------------------
+                List<UserAuditDBModel> loggedMessageList = _ThisSQLAccessLayer.GetUserAudits(null, query, parameters);
 
-            //    if(loggedMessage != null)
-            //    {
-            //        userHasAlreadyVoted = true;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = GetType().FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
-            //    _ThisErrorManager.LogErrorMessage(error);
-            //}
+                if (loggedMessageList != null && loggedMessageList.Count > 0)
+                {
+                    foreach (VotingInstanceViewModel thisInstance in allElections)
+                    {
+                        // If the user has not voted in the election then set the flag to false
+                        // --------------------------------------------------------------------
+                        if (!loggedMessageList.Select(v => v.VotingInstanceId).Contains(thisInstance.VotingInstanceId))
+                        {
+                            userHasAlreadyVoted = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = GetType().FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
+                _ThisErrorManager.LogErrorMessage(error);
+            }
 
             return userHasAlreadyVoted;
         }

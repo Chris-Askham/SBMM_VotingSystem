@@ -95,8 +95,10 @@ namespace SBMMVotingSystem.Forms.SubForms
             {
                 cboElectionTypeDDList.Items.Add(VIVotinMode.ToString());
             }            
-            cboElectionTypeDDList.SelectedItem = votingInstance.VIVotingMode;
+            cboElectionTypeDDList.SelectedItem = votingInstance.VIVotingMode.ToString();
 
+            if(votingInstance.CurrentlyInUse == 1) { btnEndElection.Enabled = true; }
+            else { btnEndElection.Enabled = false; }   
         }
         #endregion
 
@@ -181,7 +183,7 @@ namespace SBMMVotingSystem.Forms.SubForms
 
                 if(lstVotingOptions.Items.Count == 6) 
                 {
-                    btnAddOption.Enabled = true; 
+                    btnAddOption.Enabled = false; 
                     MessageBox.Show(_ThisMainGui._ThisUserManager.GetLocalisedString("lblInfoMessage_MaxOptionsAdded"), _ThisMainGui._ThisUserManager.GetLocalisedString("lblInfoMessage_InformationHeader")); 
                 }
             }

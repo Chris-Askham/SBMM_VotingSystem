@@ -55,6 +55,7 @@ namespace SBMMVotingSystem.Forms.SubForms
             this.colHeader_City = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colHeader_VOName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colHeader_NumberOfVotes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lblWinner = new System.Windows.Forms.Label();
             this.pnlElectionDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chtVotingInstanceSummary)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdVotesByArea)).BeginInit();
@@ -346,11 +347,25 @@ namespace SBMMVotingSystem.Forms.SubForms
             this.colHeader_NumberOfVotes.Name = "colHeader_NumberOfVotes";
             this.colHeader_NumberOfVotes.Width = 89;
             // 
+            // lblWinner
+            // 
+            this.lblWinner.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lblWinner.AutoSize = true;
+            this.lblWinner.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWinner.Location = new System.Drawing.Point(450, 571);
+            this.lblWinner.Name = "lblWinner";
+            this.lblWinner.Size = new System.Drawing.Size(81, 21);
+            this.lblWinner.TabIndex = 91;
+            this.lblWinner.Text = "Winner is:";
+            this.lblWinner.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblWinner.Visible = false;
+            // 
             // ucVotingSummary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.Controls.Add(this.lblWinner);
             this.Controls.Add(this.grdVotesByArea);
             this.Controls.Add(this.radVotesByOption);
             this.Controls.Add(this.radVotesByArea);
@@ -395,5 +410,6 @@ namespace SBMMVotingSystem.Forms.SubForms
         private System.Windows.Forms.DataGridViewTextBoxColumn colHeader_City;
         private System.Windows.Forms.DataGridViewTextBoxColumn colHeader_VOName;
         private System.Windows.Forms.DataGridViewTextBoxColumn colHeader_NumberOfVotes;
+        private System.Windows.Forms.Label lblWinner;
     }
 }

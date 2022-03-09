@@ -71,11 +71,16 @@ namespace SBMMVotingSystem.Forms.SubForms
                         {
                             viItem.BackColor = Color.LightSalmon;
                         }
-                    } 
 
-                    // Populate the list box with the possible options
-                    // -----------------------------------------------
-                    lstVotingInstances.Items.Add(viItem);
+                        lstVotingInstances.Items.Add(viItem);
+                    }
+                    else
+                    {
+                        if (thisInstance.CurrentlyInUse == 1)
+                        {
+                            lstVotingInstances.Items.Add(viItem);
+                        }
+                    }
                 }
             }
             else

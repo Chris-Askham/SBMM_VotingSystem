@@ -80,6 +80,49 @@ namespace SBMMVotingSystem.Managers
             return _allVotingInstances.Where(vi => vi.VIName == votingInstnaceName).FirstOrDefault();
         }
 
+
+        /// <summary>
+        /// Check which elections this user can vote on and return a list
+        /// of voting instance view model
+        /// </summary>
+        public List<VotingInstanceViewModel> GetVotingInstancesForUser(int userId)
+        {
+            List<VotingInstanceViewModel> rtnList = new List<VotingInstanceViewModel>();
+
+            try
+            {
+                string query = @"SELECT * FROM [UserAuditLog] WHERE [UserId] = @UserId AND [AuditType] = @AuditType";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                parameters.Add("@AuditType", "NewVote");
+
+                // Execute the SQL query
+                // ---------------------
+                List<UserAuditDBModel> loggedMessageList = _ThisSQLAccessLayer.GetUserAudits(null, query, parameters);
+
+                if (loggedMessageList != null && loggedMessageList.Count > 0)
+                {
+                    foreach (VotingInstanceViewModel thisInstance in _allVotingInstances)
+                    {
+                        // If the user has not voted in the election then set the flag to false
+                        // --------------------------------------------------------------------
+                        if (!loggedMessageList.Select(v => v.VotingInstanceId).Contains(thisInstance.VotingInstanceId))
+                        {
+                            rtnList.Add(thisInstance);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = GetType().FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
+                _ThisErrorManager.LogErrorMessage(error);
+            }
+
+            return rtnList;
+        }
+
         /// <summary>
         /// End the voting instance
         /// </summary>
@@ -275,13 +318,13 @@ namespace SBMMVotingSystem.Managers
 
             try
             {
-                string insertScript = "INSERT INTO [Vote] ([VotingInstanceId], [VotedForOptionId], [City], [Preference]) " +
-                                        "VALUES (@VotingInstanceId, @VotedForOptionId, @City, @Preference);  SELECT last_insert_rowid();";
+                string insertScript = "INSERT INTO [Vote] ([VotingInstanceId], [VotedForOptionId], [VotedAtCity], [Preference]) " +
+                                        "VALUES (@VotingInstanceId, @VotedForOptionId, @VotedAtCity, @Preference);  SELECT last_insert_rowid();";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@VotingInstanceId", submittedVote.VotingInstanceId);
                 parameters.Add("@VotedForOptionId", submittedVote.VotedForOptionId);
-                parameters.Add("@City", submittedVote.City);
+                parameters.Add("@VotedAtCity", submittedVote.VotedAtCity);
                 parameters.Add("@Preference", submittedVote.Preference);
 
                 rtnVoteId = _ThisSQLAccessLayer.ExecuteScalar_CreateT(null, insertScript, parameters);
@@ -352,7 +395,7 @@ namespace SBMMVotingSystem.Managers
 
                     // Get the data for the grid by city
                     // ---------------------------------
-                    var areaGroup = results.GroupBy(r => r.City).ToList();
+                    var areaGroup = results.GroupBy(r => r.VotedAtCity).ToList();
 
                     foreach (var group in areaGroup)
                     {

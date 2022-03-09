@@ -253,8 +253,8 @@ namespace SBMMVotingSystem.DAL
                     // Execute the query
                     // -----------------
                     var languageResult = db.QueryFirstOrDefault(sqlString, parameters);
-                    
-                    if(languageResult != null)
+
+                    if (languageResult != null)
                     {
                         if (cultureCode == LanguageOptions.EN) { rtnString = languageResult.EN; }
                         else if (cultureCode == LanguageOptions.ES) { rtnString = languageResult.ES; }
@@ -279,16 +279,17 @@ namespace SBMMVotingSystem.DAL
         /// <param name="sqlString">SQL string to execute</param>
         /// <param name="parameters">Parameter used in SQL string</param>
         /// <returns></returns>
-        public UserAuditDBModel GetUserAudits(string connectionString, string sqlString, DynamicParameters parameters)
+        public List<UserAuditDBModel> GetUserAudits(string connectionString, string sqlString, DynamicParameters parameters)
         {
-            UserAuditDBModel rtnAudit = new UserAuditDBModel();
+            List<UserAuditDBModel> rtnAudit = new List<UserAuditDBModel>();
             try
             {
                 using (IDbConnection db = new SQLiteConnection(connectionString ?? _ConnectionString))
                 {
                     // Execute the query
                     // -----------------
-                    rtnAudit = db.QueryFirstOrDefault<UserAuditDBModel>(sqlString, parameters);
+                    var tempList = db.Query<UserAuditDBModel>(sqlString, parameters);
+                    rtnAudit = tempList.ToList();
                 }
             }
             catch (Exception ex)

@@ -99,7 +99,7 @@ namespace SBMMVotingSystem.DAL
         /// <param name="sqlString">SQL string to execute</param>
         /// <param name="parameters">Parameter used in SQL string</param>
         /// <returns></returns>
-        UserAuditDBModel GetUserAudits(string connectionString, string sqlString, DynamicParameters parameters);
+        List<UserAuditDBModel> GetUserAudits(string connectionString, string sqlString, DynamicParameters parameters);
         #endregion
     }
 }

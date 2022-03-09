@@ -93,10 +93,15 @@ namespace SBMMVotingSystem.Forms.SubForms
                 btnGetVotes.Visible = false;
             }
 
+            bool userHasVotedOnAll = _ThisMainGui._ThisUserAuditManager.HasUserAlreadyVoted(_ThisMainGui._ThisUserManager.CurrentUsernameId,
+                                                                                            _ThisMainGui._ThisVotingManager._allVotingInstances);
+
             // IF the election has not been set for this app disable the voting button
+            // ELSE IF the user has voted on all elections then disable the button
             // ELSE enable the button
             // -----------------------------------------------------------------------
-            if(_ThisMainGui._ThisVotingManager._allVotingInstances.Where(e => e.CurrentlyInUse == 1).Count() == 0) { btnNewVote.Enabled = false; }
+            if (_ThisMainGui._ThisVotingManager._allVotingInstances.Where(e => e.CurrentlyInUse == 1).Count() == 0) { btnNewVote.Enabled = false; }
+            else if (userHasVotedOnAll) { btnNewVote.Enabled = false; }
             else { btnNewVote.Enabled = true; }
 
         }

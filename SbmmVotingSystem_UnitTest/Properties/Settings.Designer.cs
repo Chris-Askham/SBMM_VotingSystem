@@ -25,8 +25,8 @@ namespace SbmmVotingSystem_UnitTest.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=D:\\OneDrives\\OneDrive - 3SC Limited\\Projects\\OOP Coursework\\SBMM_Voti" +
-            "ngSystem\\SBMMVotingSystem\\DAL\\SBMMVotingUnitTestDatabase.db;Version=3;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=D:\\OneDrives\\OneDrive - 3SC Limited\\Projects\\OOP Coursework\\SBMMVotin" +
+            "gSystem_CW2\\SBMMVotingSystem\\DAL\\SBMMVotingUnitTestDatabase.db;Version=3;")]
         public string TestConnectionString {
             get {
                 return ((string)(this["TestConnectionString"]));

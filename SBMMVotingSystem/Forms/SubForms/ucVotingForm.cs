@@ -24,7 +24,7 @@ namespace SBMMVotingSystem.Forms.SubForms
         /// used for submitting a new vote and various checks
         /// Key: Control Name, VoteSelectionViewModel: Voting Option Id and Prefrence value
         /// </summary>
-        private Dictionary<String, VoteSelectionViewModel> VoteResults { get; set; } 
+        private Dictionary<String, VoteSelectionViewModel> VoteResults { get; set; }
 
         #endregion
 
@@ -59,16 +59,21 @@ namespace SBMMVotingSystem.Forms.SubForms
 
             if (_ThisMainGui._ThisVotingManager._allVotingInstances.Count > 0)
             {
-                foreach (VotingInstanceViewModel thisInstance in _ThisMainGui._ThisVotingManager._allVotingInstances)
-                {
-                    // Create the item object
-                    // ----------------------
-                    ListViewItem viItem = new ListViewItem(thisInstance.VIName);
-                    viItem.SubItems.Add(thisInstance.VotingInstanceId.ToString());
+                List<VotingInstanceViewModel> userCanVoteOn = _ThisMainGui._ThisVotingManager.GetVotingInstancesForUser(_ThisMainGui._ThisUserManager.CurrentUsernameId);
 
-                    // Populate the drop down list with the same options
-                    // -------------------------------------------------
-                    cboElectionTypeDDList.Items.Add(viItem.Text);
+                if (userCanVoteOn != null && userCanVoteOn.Count > 0)
+                {
+                    foreach (VotingInstanceViewModel thisInstance in userCanVoteOn)
+                    {
+                        // Create the item object
+                        // ----------------------
+                        ListViewItem viItem = new ListViewItem(thisInstance.VIName);
+                        viItem.SubItems.Add(thisInstance.VotingInstanceId.ToString());
+
+                        // Populate the drop down list with the same options
+                        // -------------------------------------------------
+                        cboElectionTypeDDList.Items.Add(viItem.Text);
+                    }
                 }
             }
         }
@@ -148,17 +153,21 @@ namespace SBMMVotingSystem.Forms.SubForms
                     // ------------
                     int optionId = VoteResults.FirstOrDefault(r => r.Value.PreferenceValue == 1).Value.VotingOptionId;
 
-                    VoteDBModel voteDBModel = new VoteDBModel()
+                    if (optionId != 0)
                     {
-                        City = thisUser.Address.City,
-                        VotedForOptionId = optionId,
-                        VotingInstanceId = SelectedVotingInstance.VotingInstanceId,
-                        Preference = 1
-                    };
+                        VoteDBModel voteDBModel = new VoteDBModel()
+                        {
+                            VotedAtCity = thisUser.Address.City,
+                            VotedForOptionId = optionId,
+                            VotingInstanceId = SelectedVotingInstance.VotingInstanceId,
+                            Preference = 1
+                        };
 
-                    // Send to manager to add to the database
-                    // --------------------------------------
-                    voteSubitted = _ThisMainGui._ThisVotingManager.SubmitNewVote(voteDBModel, thisUser.UserId) != 0;
+                        // Send to manager to add to the database
+                        // --------------------------------------
+                        voteSubitted = _ThisMainGui._ThisVotingManager.SubmitNewVote(voteDBModel, thisUser.UserId) != 0;
+                    }
+
                 }
                 // This voting mode has to submit multiple votes
                 // ---------------------------------------------
@@ -170,7 +179,7 @@ namespace SBMMVotingSystem.Forms.SubForms
                         {
                             VoteDBModel voteDBModel = new VoteDBModel()
                             {
-                                City = thisUser.Address.City,
+                                VotedAtCity = thisUser.Address.City,
                                 VotedForOptionId = item.Value.VotingOptionId,
                                 VotingInstanceId = SelectedVotingInstance.VotingInstanceId,
                                 Preference = item.Value.PreferenceValue
@@ -197,10 +206,14 @@ namespace SBMMVotingSystem.Forms.SubForms
         private void votingOption_CheckedChanged(object sender, EventArgs e)
         {
             var radBtn = (CustomRadioButton)sender;
-            foreach (var item in VoteResults.Keys)
+
+            if (radBtn.Checked)
             {
-                if(item == radBtn.Text) { VoteResults[radBtn.Name].PreferenceValue = 1; }
-                else { VoteResults[radBtn.Name].PreferenceValue = 0; }
+                VoteResults[radBtn.Name].PreferenceValue = 1; btnSubmitVote.Enabled = true;
+            }
+            else
+            {
+                VoteResults[radBtn.Name].PreferenceValue = 0;
             }
         }
 
@@ -224,7 +237,7 @@ namespace SBMMVotingSystem.Forms.SubForms
                     // IF the voting mode is set to Single Transferable Vote 
                     // ELSE if the voting mode is set to Sumplementary Vote
                     // -----------------------------------------------------
-                    if(SelectedVotingInstance.VIVotingMode == Managers.VotingManager.VotingMode.SingleTransferableVote)
+                    if (SelectedVotingInstance.VIVotingMode == Managers.VotingManager.VotingMode.SingleTransferableVote)
                     {
                         // IF the number entered is between 1 and the max number of voting options
                         // ELSE entered number is out of bounds
@@ -253,7 +266,7 @@ namespace SBMMVotingSystem.Forms.SubForms
                             textBox.Focus();
                         }
                     }
-                    else if(SelectedVotingInstance.VIVotingMode == Managers.VotingManager.VotingMode.SupplementaryVote)
+                    else if (SelectedVotingInstance.VIVotingMode == Managers.VotingManager.VotingMode.SupplementaryVote)
                     {
                         // IF the number entered is either 1 or 2
                         // ELSE entered number is out of bounds
@@ -318,7 +331,7 @@ namespace SBMMVotingSystem.Forms.SubForms
                 radioButton.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
                 radioButton.Name = "btn" + thisOption.VOName;
                 radioButton.UnCheckedColor = Color.Gray;
-                radioButton.CheckedChanged += new EventHandler(this.votingOption_CheckedChanged);
+                radioButton.CheckedChanged += new EventHandler(votingOption_CheckedChanged);
                 radioButton.Size = new Size(180, 55);
                 radioButton.Checked = false;
 

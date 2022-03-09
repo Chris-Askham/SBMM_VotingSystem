@@ -11,7 +11,7 @@ namespace SBMMVotingSystem.Models
         public int VotedForOptionId { get; set; }
         public int VotingInstanceId { get; set; }
         public int VoteId { get; set; }
-        public string City { get; set; }
+        public string VotedAtCity { get; set; }
         public int Preference { get; set; }
     }
 }
