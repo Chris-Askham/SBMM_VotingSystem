@@ -226,6 +226,7 @@ namespace SBMMVotingSystem.Forms
         {
             SwitchScreenType(ScreenTypes.UserLoginForm);
             _ThisUserManager.Logout();
+            lblHeaderLabel.Text = string.Empty;
 
             PopulateLoginName(null);
         }

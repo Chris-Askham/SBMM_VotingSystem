@@ -76,11 +76,10 @@ namespace SBMMVotingSystem.Forms.SubForms
                 // ----------------------
                 SetVotingInstanceDetails(results);
 
-                if(results.VotingInstance.CurrentlyInUse == 0)
+                if (results.VotingInstance.CurrentlyInUse == 0)
                 {
                     lblWinner.Visible = true;
-
-                    CalculatedTheWinner(results);
+                    lblWinner.Text = _ThisMainGui._ThisUserManager.GetLocalisedString("lblWinner") + results.WinnerName;
                 }
             }
         }
@@ -168,8 +167,8 @@ namespace SBMMVotingSystem.Forms.SubForms
                 for (int i = 0; i < results.ResultsForOption.Count; i++)
                 {
                     System.Windows.Forms.DataVisualization.Charting.Series series = chtVotingInstanceSummary.Series.Add(results.ResultsForOption[i].VOName);
-                    series.Points.Add(results.ResultsForOption[i].NumberOfVotes);
-                    voteCount += results.ResultsForOption[i].NumberOfVotes;
+                    series.Points.Add(results.ResultsForOption[i].NumberOfVotesPerOption);
+                    voteCount += results.ResultsForOption[i].NumberOfVotesPerOption;
                 }
                 chtVotingInstanceSummary.Visible = true;
                 lblTotalnumberOfVotesText.Text = voteCount.ToString();
@@ -180,7 +179,7 @@ namespace SBMMVotingSystem.Forms.SubForms
         /// Create the grid and populate the data 
         /// </summary>
         /// <param name="results">Results for this election</param>
-        private void CreateResultsGrid (SummaryExportModel results)
+        private void CreateResultsGrid(SummaryExportModel results)
         {
             grdVotesByArea.Rows.Clear();
 
@@ -213,30 +212,6 @@ namespace SBMMVotingSystem.Forms.SubForms
                                         $"{results.VotingInstance.Address.Postcode ?? String.Empty}";
             chtVotingInstanceSummary.Visible = true;
             radVotesByOption.Checked = true;
-        }
-
-        /// <summary>
-        /// Calculate the winner for this election
-        /// </summary>
-        /// <param name="results">Results for this election</param>
-        private void CalculatedTheWinner(SummaryExportModel results)
-        {
-            string winnerName = string.Empty;
-            switch (results.VotingInstance.VIVotingMode)
-            {
-                case VotingManager.VotingMode.FirstPassedThePost:
-                    var firstPassedThePostGroup = results.ResultsForOption.GroupBy(f => f.VotedForOptionId).ToList();
-
-
-                    var thiswinnerName = firstPassedThePostGroup.OrderByDescending(list => list.Count()).First();
-                    break;
-                case VotingManager.VotingMode.SingleTransferableVote:
-                    break;
-                case VotingManager.VotingMode.SupplementaryVote:
-                    break;
-                default:
-                    break;
-            }
         }
         #endregion
 
@@ -283,27 +258,33 @@ namespace SBMMVotingSystem.Forms.SubForms
                                                     $"{results.VotingInstance.Address.Postcode},";
                                 ws.Cells[8, 2] = "Currently in use?";
                                 ws.Cells[8, 3] = results.VotingInstance.CurrentlyInUse == 1 ? "Yes" : "No";
-                                ws.Cells[10, 2] = "Total votes by chosen option";
-                                ws.Cells[14, 2] = "Total votes by city";
+                                if(results.VotingInstance.CurrentlyInUse == 0)
+                                {
+                                    ws.Cells[9, 2] = "Winning candidate";
+                                    ws.Cells[9, 3] = results.WinnerName;
+                                }
+                                ws.Cells[11, 2] = "Total votes by chosen option";
+                                ws.Cells[15, 2] = "Total votes by city";
 
                                 // Write the results by voted option to the workbook
                                 // -------------------------------------------------
                                 int columnNumber = 2;
                                 foreach (SummaryChartViewModel thisOption in results.ResultsForOption)
                                 {
-                                    ws.Cells[11, columnNumber] = thisOption.VOName;
-                                    ws.Cells[12, columnNumber] = thisOption.NumberOfVotes;
+                                    ws.Cells[12, columnNumber] = thisOption.VOName;
+                                    ws.Cells[13, columnNumber] = thisOption.NumberOfVotesPerOption;
                                     columnNumber++;
                                 }
 
-                                // Write the results by voted option to the workbook
-                                // -------------------------------------------------
+                                // Write the results by city to the workbook
+                                // -----------------------------------------
                                 columnNumber = 2;
                                 foreach (SummaryForAreaViewModel thisOption in results.ResultsForArea)
                                 {
-                                    ws.Cells[15, columnNumber] = thisOption.City;
-                                    ws.Cells[16, columnNumber] = thisOption.NumberOfVotesPerCity;
-                                    ws.Cells[17, columnNumber] = thisOption.VOName;
+                                    ws.Cells[16, columnNumber] = thisOption.City;
+                                    ws.Cells[17, columnNumber] = thisOption.NumberOfVotesPerCity;
+                                    ws.Cells[18, columnNumber] = thisOption.VOName;
+                                    columnNumber++;
                                 }
 
                                 wb.SaveAs(saveFileDialog.FileName,
@@ -343,7 +324,7 @@ namespace SBMMVotingSystem.Forms.SubForms
             lblElectionName.Text = _ThisMainGui._ThisUserManager.GetLocalisedString("lblElectionName");
             lblTotalnumberOfVotes.Text = _ThisMainGui._ThisUserManager.GetLocalisedString("lblTotalnumberOfVotes");
             lblSummaryMessage.Text = _ThisMainGui._ThisUserManager.GetLocalisedString("lblSummaryMessage");
-            btnReturn.Text = _ThisMainGui._ThisUserManager.GetLocalisedString("btnReturn"); 
+            btnReturn.Text = _ThisMainGui._ThisUserManager.GetLocalisedString("btnReturn");
             grdVotesByArea.Columns[0].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_City");
             grdVotesByArea.Columns[1].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_VOName");
             grdVotesByArea.Columns[2].Name = _ThisMainGui._ThisUserManager.GetLocalisedString("colHeader_NumberOfVotes");

@@ -15,15 +15,15 @@ namespace SBMMVotingSystem.Models
         public VotingInstanceViewModel VotingInstance { get; set; }
         public List<SummaryForAreaViewModel> ResultsForArea { get; set; }
         public List<SummaryChartViewModel> ResultsForOption { get; set; }
+
+        public string WinnerName { get; set; }
     }
 
     /// <summary>
     /// Summary of the election data based on the city the vote was placed
     /// </summary>
-    public class SummaryForAreaViewModel
+    public class SummaryForAreaViewModel : OptionDetailForSummaryModel
     {
-        public int VotedForOptionId { get; set; }
-        public string VOName { get; set; }
         public string City { get; set; }
         public int NumberOfVotesPerCity { get; set; }
     }
@@ -31,10 +31,17 @@ namespace SBMMVotingSystem.Models
     /// <summary>
     /// Summary of the election data based on the option that was chosen
     /// </summary>
-    public class SummaryChartViewModel
+    public class SummaryChartViewModel : OptionDetailForSummaryModel
+    {
+        public int NumberOfVotesPerOption { get; set; }
+    }
+
+    /// <summary>
+    /// Detail for this voting option
+    /// </summary>
+    public class OptionDetailForSummaryModel
     {
         public int VotedForOptionId { get; set; }
         public string VOName { get; set; }
-        public int NumberOfVotes { get; set; }
     }
 }

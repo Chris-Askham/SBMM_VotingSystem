@@ -75,7 +75,6 @@ namespace SBMMVotingSystem.Forms.SubForms
                     usersList[i].Address.Country + ", " +
                     usersList[i].Address.Postcode);
                 usersListViewItem.SubItems.Add(usersList[i].Age.ToString());
-                usersListViewItem.SubItems.Add(usersList[i].HasVoted ? "Yes" : "No");
                 usersListViewItem.SubItems.Add(usersList[i].RefNumber);
                 usersListViewItem.SubItems.Add(usersList[i].Enabled == 1 ? "Yes" : "No");
 

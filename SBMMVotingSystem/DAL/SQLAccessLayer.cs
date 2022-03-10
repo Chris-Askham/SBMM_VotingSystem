@@ -173,6 +173,176 @@ namespace SBMMVotingSystem.DAL
 
             return rtnVoteSummary;
         }
+
+        /// <summary>
+        /// Get the winner for a suplementary election
+        /// </summary>
+        /// <param name="connectionString">Connection string to use, null if it's the real db</param>
+        /// <param name="votingInstance">Election that we want to get the vote for </param>
+        /// <returns></returns>
+        public string GetSupplementaryWinner(string connectionString, VotingInstanceViewModel votingInstance)
+        {
+            string winnerName = string.Empty;
+
+            try
+            {
+                using (IDbConnection db = new SQLiteConnection(connectionString ?? _ConnectionString))
+                {
+                    string queryScript = "SELECT * FROM [Vote] WHERE [VotingInstanceId] = @VotingInstanceId";
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@VotingInstanceId", votingInstance.VotingInstanceId);
+
+                    List<VoteDBModel> results = LoadVotes(null, queryScript, parameters);
+
+                    if(results.Count > 0)
+                    {
+                        var groupedResults = from p in results
+                                             group p by p.VotedForOptionId into g
+                                              select new { VotingOptionId = g.Key, Count = g.Where(c => c.Preference == 1).Count() };
+
+                        string query = "SELECT * FROM [VotingOption] WHERE [VotingOptionId] = @VotingOptionId";
+                        parameters = new DynamicParameters();
+                        parameters.Add("@VotingOptionId", groupedResults.OrderByDescending(c => c.Count).FirstOrDefault().VotingOptionId);
+                        VotingOptionDBModel result = LoadVotingOptions(null, query, parameters).FirstOrDefault();
+
+                        winnerName = result.VOName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = typeof(SQLAccessLayer).FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
+                _ThisErrorManager.LogErrorMessage(error);
+            }
+
+            return winnerName; 
+        }
+
+        /// <summary>
+        /// Get the winner for a first past the post election
+        /// </summary>
+        /// <param name="connectionString">Connection string to use, null if it's the real db</param>
+        /// <param name="votingInstance">Election that we want to get the vote for </param>
+        /// <returns></returns>
+        public string GetFirstPastPostWinner(string connectionString, VotingInstanceViewModel votingInstance)
+        {
+            string winnerName = string.Empty;
+
+            try
+            {
+                using (IDbConnection db = new SQLiteConnection(connectionString ?? _ConnectionString))
+                {
+                    string queryScript = "SELECT * FROM [Vote] WHERE [VotingInstanceId] = @VotingInstanceId";
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@VotingInstanceId", votingInstance.VotingInstanceId);
+
+                    List<VoteDBModel> results = LoadVotes(null, queryScript, parameters);
+
+                    if (results.Count > 0)
+                    {
+                        var groupedResults = from p in results
+                                             group p by p.VotedForOptionId into g
+                                             select new { VotingOptionId = g.Key, Count = g.Count() };
+
+                        string query = "SELECT * FROM [VotingOption] WHERE [VotingOptionId] = @VotingOptionId";
+                        parameters = new DynamicParameters();
+                        parameters.Add("@VotingOptionId", groupedResults.OrderByDescending(c => c.Count).FirstOrDefault().VotingOptionId);
+                        VotingOptionDBModel result = LoadVotingOptions(null, query, parameters).FirstOrDefault();
+
+                        winnerName = result.VOName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = typeof(SQLAccessLayer).FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
+                _ThisErrorManager.LogErrorMessage(error);
+            }
+
+            return winnerName;
+        }
+
+        /// <summary>
+        /// Get the winner for a Supplementary Vote election
+        /// </summary>
+        /// <param name="connectionString">Connection string to use, null if it's the real db</param>
+        /// <param name="votingInstance">Election that we want to get the vote for </param>
+        /// <returns></returns>
+        public string GetSupplementaryVoteWinner(string connectionString, VotingInstanceViewModel votingInstance)
+        {
+            string winnerName = string.Empty;
+            int winningOptionId = 0;
+
+            try
+            {
+                using (IDbConnection db = new SQLiteConnection(connectionString ?? _ConnectionString))
+                {
+                    // Get all the votes
+                    // -----------------
+                    string queryScript = "SELECT * FROM [Vote] WHERE [VotingInstanceId] = @VotingInstanceId";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@VotingInstanceId", votingInstance.VotingInstanceId);
+
+                    List<VoteDBModel> results = LoadVotes(null, queryScript, parameters);
+
+                    if (results.Count > 0)
+                    {
+                        // Group them by option id
+                        // -----------------------
+                        var optionGroup = from p in results
+                                             group p by p.VotedForOptionId into g
+                                             select new { VotingOptionId = g.Key, CountPref1 = g.Where(c => c.Preference == 1).Count(), CountPref2 = g.Where(c => c.Preference == 2).Count() };
+
+                        optionGroup = optionGroup.OrderByDescending(list => list.CountPref1).Take(2);
+
+                        var firstPlaceVotes = optionGroup.FirstOrDefault();
+                        var secondPlaceVotes = optionGroup.LastOrDefault();
+
+                        int percentage = (firstPlaceVotes.CountPref1 / 100) * results.Count;
+
+                        // IF a candidate has over 50% of the votes
+                        // ELSE Winner is between the top 2 candidate who has the most rank 1 + rank 2 votes
+                        // ---------------------------------------------------------------------------------
+                        if (percentage > 50)
+                        {
+                            winningOptionId = firstPlaceVotes.VotingOptionId;
+                        }
+                        else
+                        {
+                            int firstOptionCombined = firstPlaceVotes.CountPref1 + firstPlaceVotes.CountPref2;
+                            int secondOptionCombined = secondPlaceVotes.CountPref1 + secondPlaceVotes.CountPref2;
+
+                            if (firstOptionCombined >= secondOptionCombined)
+                            {
+                                winningOptionId = firstPlaceVotes.VotingOptionId;
+                            }
+                            else
+                            {
+                                winningOptionId = secondPlaceVotes.VotingOptionId;
+                            }
+                        }
+
+                        // Once we have the winning option id, get the option name
+                        // -------------------------------------------------------
+                        string query = "SELECT * FROM [VotingOption] WHERE [VotingOptionId] = @VotingOptionId";
+                        parameters = new DynamicParameters();
+                        parameters.Add("@VotingOptionId", winningOptionId);
+                        VotingOptionDBModel result = LoadVotingOptions(null, query, parameters).FirstOrDefault();
+
+                        winnerName = result.VOName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = typeof(SQLAccessLayer).FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
+                _ThisErrorManager.LogErrorMessage(error);
+            }
+
+            return winnerName;
+        }
         #endregion
 
         #endregion

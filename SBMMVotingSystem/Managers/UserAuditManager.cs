@@ -107,6 +107,12 @@ namespace SBMMVotingSystem.Managers
                         }
                     }
                 }
+                else
+                {
+                    // This user has not submitted any votes yet
+                    // -----------------------------------------
+                    userHasAlreadyVoted = false;
+                }
             }
             catch (Exception ex)
             {

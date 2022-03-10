@@ -303,6 +303,10 @@ namespace SBMMVotingSystem.Forms.SubForms
                     textBox.Focus();
                 }
             }
+            else
+            {
+                VoteResults[textBox.Name].PreferenceValue = 0;
+            }
         }
         #endregion
 

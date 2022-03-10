@@ -58,11 +58,14 @@ namespace SBMMVotingSystem.Forms.SubForms
             numVotingInstanceId.Value = 0;
             tbtnEnabled.Checked = true;
             cboElectionTypeDDList.Items.Clear();
+            btnEndElection.Enabled = false;
+            btnAddOption.Enabled = true;
 
             foreach (VotingMode VIVotinMode in (VotingMode[])Enum.GetValues(typeof(VotingMode)))
             {
                 cboElectionTypeDDList.Items.Add(VIVotinMode.ToString());
             }
+            cboElectionTypeDDList.SelectedItem = string.Empty;
         }
 
         /// <summary>
@@ -221,6 +224,7 @@ namespace SBMMVotingSystem.Forms.SubForms
         private void btnClearOptions_Click(object sender, EventArgs e)
         {
             lstVotingOptions.Items.Clear();
+            btnAddOption.Enabled = true ;
         }
 
         /// <summary>

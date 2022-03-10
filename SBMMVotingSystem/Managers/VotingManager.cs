@@ -113,6 +113,15 @@ namespace SBMMVotingSystem.Managers
                         }
                     }
                 }
+                else
+                {
+                    // User has not yet voted on anything so just add all elections to the list
+                    // ------------------------------------------------------------------------
+                    foreach (VotingInstanceViewModel thisInstance in _allVotingInstances)
+                    {
+                        rtnList.Add(thisInstance);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -139,6 +148,7 @@ namespace SBMMVotingSystem.Managers
                 parameters.Add("@VotingInstanceId", votingInstanceId);
 
                 _ThisSQLAccessLayer.ExecuteSQL_ReturnNothing(null, query, parameters);
+                _allVotingInstances.Where(v => v.VotingInstanceId == votingInstanceId).FirstOrDefault().CurrentlyInUse = 0;
 
                 // Log audit to record a election has ended
                 // ----------------------------------------
@@ -367,6 +377,8 @@ namespace SBMMVotingSystem.Managers
             rtnmodel.ResultsForOption = new List<SummaryChartViewModel>();
             rtnmodel.ResultsForArea = new List<SummaryForAreaViewModel>();
 
+            List<VoteDBModel> allResults = new List<VoteDBModel>();
+
             try
             {
                 rtnmodel.VotingInstance = GetVotingInstanceForName(selectedinstance);
@@ -382,12 +394,16 @@ namespace SBMMVotingSystem.Managers
                     parameters.Add("@VotedForOptionId", thisOption.VotingOptionId);
 
                     List<VoteDBModel> results = _ThisSQLAccessLayer.LoadVotes(null, queryScript, parameters);
+                    foreach (VoteDBModel thisVote in results)
+                    {
+                        allResults.Add(thisVote);
+                    }
 
                     // Get the data for the chart by option 
                     // ------------------------------------
                     SummaryChartViewModel modelToAddForOption = new SummaryChartViewModel()
                     {
-                        NumberOfVotes = results.Count,
+                        NumberOfVotesPerOption = results.Count,
                         VotedForOptionId = thisOption.VotingOptionId,
                         VOName = thisOption.VOName
                     };
@@ -409,6 +425,12 @@ namespace SBMMVotingSystem.Managers
                         rtnmodel.ResultsForArea.Add(modelToAddForArea);
                     }
                 }
+
+                    // Get the data for the winner
+                    // ---------------------------
+                    string winner = string.Empty;
+                    CalculatedTheWinner(rtnmodel.VotingInstance, allResults, ref winner);
+                    rtnmodel.WinnerName = winner;
             }
             catch (Exception ex)
             {
@@ -417,6 +439,35 @@ namespace SBMMVotingSystem.Managers
             }
 
             return rtnmodel;
+        }
+
+        /// <summary>
+        /// Calculate the winner for this election
+        /// </summary>
+        /// <param name="results">Results for this election</param>
+        private void CalculatedTheWinner(VotingInstanceViewModel election, List<VoteDBModel> results, ref string winner )
+        {
+            switch (election.VIVotingMode)
+            {
+                case VotingManager.VotingMode.FirstPassedThePost:
+                    // Winner is the person with the most votes
+                    // ----------------------------------------
+                    winner = _ThisSQLAccessLayer.GetFirstPastPostWinner(null, election);
+                    break;
+                case VotingManager.VotingMode.SingleTransferableVote:
+                    // Winner is the person that has the most rank 1 votes
+                    // ---------------------------------------------------
+                    winner = _ThisSQLAccessLayer.GetSupplementaryWinner(null, election);
+                    break;
+                case VotingManager.VotingMode.SupplementaryVote:
+                    // Winner is a candidate has over 50% of the votes
+                    // If not > 50% then Winner is the candidate who has the most rank 1 votes
+                    // -----------------------------------------------------------------------
+                    winner = _ThisSQLAccessLayer.GetSupplementaryVoteWinner(null, election);
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>

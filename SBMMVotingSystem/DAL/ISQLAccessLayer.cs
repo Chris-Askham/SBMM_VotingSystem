@@ -58,6 +58,30 @@ namespace SBMMVotingSystem.DAL
         /// <param name="parameters">Parameter used in SQL string</param>
         /// <returns></returns>
         List<VoteDBModel> LoadVotes(string connectionString, string sqlString, DynamicParameters parameters);
+
+        /// <summary>
+        /// Get the winner for a suplementary election
+        /// </summary>
+        /// <param name="connectionString">Connection string to use, null if it's the real db</param>
+        /// <param name="votingInstance">Election that we want to get the vote for </param>
+        /// <returns></returns>
+        string GetSupplementaryWinner(string connectionString, VotingInstanceViewModel votingInstance);
+
+        /// <summary>
+        /// Get the winner for a first past the post election
+        /// </summary>
+        /// <param name="connectionString">Connection string to use, null if it's the real db</param>
+        /// <param name="votingInstance">Election that we want to get the vote for </param>
+        /// <returns></returns>
+        string GetFirstPastPostWinner(string connectionString, VotingInstanceViewModel votingInstance);
+
+        /// <summary>
+        /// Get the winner for a Supplementary Vote election
+        /// </summary>
+        /// <param name="connectionString">Connection string to use, null if it's the real db</param>
+        /// <param name="votingInstance">Election that we want to get the vote for </param>
+        /// <returns></returns>
+        string GetSupplementaryVoteWinner(string connectionString, VotingInstanceViewModel votingInstance);
         #endregion
 
         #endregion

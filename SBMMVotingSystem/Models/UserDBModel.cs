@@ -12,7 +12,6 @@ namespace SBMMVotingSystem.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int AddressId { get; set; }
-        public bool HasVoted { get; set; }
         public int Age { get; set; }
         public string RefNumber { get; set; }
         public AddressDBModel Address {get;set;}
