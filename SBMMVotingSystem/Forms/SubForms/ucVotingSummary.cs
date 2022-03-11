@@ -60,6 +60,8 @@ namespace SBMMVotingSystem.Forms.SubForms
 
             if (selectedinstance != "")
             {
+                btnExportSummary.Visible = true;
+             
                 // Get the data
                 // ------------
                 SummaryExportModel results = _ThisMainGui._ThisVotingManager.GetSummaryData(selectedinstance);
@@ -112,6 +114,7 @@ namespace SBMMVotingSystem.Forms.SubForms
             chtVotingInstanceSummary.Visible = false;
             grdVotesByArea.Visible = false;
             lblWinner.Visible = false;
+            btnExportSummary.Visible = false;
 
             LoadVotingInstanceDDListData();
         }
