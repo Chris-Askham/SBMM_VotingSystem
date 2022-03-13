@@ -70,7 +70,7 @@ namespace SBMMVotingSystem.Forms.SubForms
                 LastName = txtLastName.Texts,
                 Age = int.Parse(cboAgeDDList.SelectedItem.ToString()),
                 RefNumber = txtVotingRefNumber.Texts,
-                Enabled = tbtnEnabled.Checked ? 1: 0,
+                Enabled = tbtnEnabled.Checked ? 1 : 0,
             };
 
             AddressDBModel addressToSave = new AddressDBModel()
@@ -85,7 +85,7 @@ namespace SBMMVotingSystem.Forms.SubForms
 
             // Save the new/existing user
             // --------------------------
-            if(userToSave.UserId != 0)
+            if (userToSave.UserId != 0)
             {
                 userAdded = _ThisMainGui._ThisUserManager.SaveUpdatesToUser(userToSave, addressToSave);
             }
@@ -99,8 +99,15 @@ namespace SBMMVotingSystem.Forms.SubForms
             // -------------------
             if (userAdded)
             {
-                _ThisMainGui.SwitchScreenType(frmMainGui.ScreenTypes.UserNavForm);
-                _ThisMainGui.UserNavForm.SetupNavForm();
+                if (userToSave.UserId != 0)
+                {
+                    _ThisMainGui.SwitchScreenType(frmMainGui.ScreenTypes.UsersManagementForm);
+                }
+                else
+                {
+                    _ThisMainGui.SwitchScreenType(frmMainGui.ScreenTypes.UserNavForm);
+                    _ThisMainGui.UserNavForm.SetupNavForm();
+                }
             }
             else
             {
@@ -182,7 +189,7 @@ namespace SBMMVotingSystem.Forms.SubForms
             txtUsername.Texts = String.Empty;
             txtVotingRefNumber.Texts = String.Empty;
             numAddressId.Value = 0;
-            numUserId.Value = 0;    
+            numUserId.Value = 0;
 
             // Set the drop down lists
             // -----------------------
@@ -207,7 +214,7 @@ namespace SBMMVotingSystem.Forms.SubForms
         /// </summary>
         /// <param name="thisUser"></param>
         internal void SetupFormForUpdateUser(SuperUserViewModel thisUser)
-        { 
+        {
             // Populate all teh text fields
             // ----------------------------
             txtAddress1.Texts = thisUser.Address.AddressLine1;

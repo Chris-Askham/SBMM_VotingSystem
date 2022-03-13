@@ -83,17 +83,19 @@ namespace SbmmVotingSystem_UnitTest
                     AddressId = 1,
                     CurrentlyInUse = 0,
                     VIDescription = "Unit Test for adding and deleting  a voting instance",
-                    VIName = "Unit Test Election"
+                    VIName = "Unit Test Election",
+                    VIVotingMode = SBMMVotingSystem.Managers.VotingManager.VotingMode.FirstPassedThePost
                 };
 
-                string insertScript = "INSERT INTO [VotingInstance] ([VIName], [ViDescription], [AddressId], [CurrentlyInUse]) " +
-                                        "VALUES (@VIName, @ViDescription, @AddressId, @CurrentlyInUse); SELECT last_insert_rowid();";
+                string insertScript = "INSERT INTO [VotingInstance] ([VIName], [ViDescription], [AddressId], [CurrentlyInUse], [VIVotingMode]) " +
+                                        "VALUES (@VIName, @ViDescription, @AddressId, @CurrentlyInUse, @VIVotingMode); SELECT last_insert_rowid();";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@VIName", instanceToAdd.VIName);
                 parameters.Add("@ViDescription", instanceToAdd.VIDescription);
                 parameters.Add("@AddressId", instanceToAdd.AddressId);
                 parameters.Add("@CurrentlyInUse", instanceToAdd.CurrentlyInUse);
+                parameters.Add("@VIVotingMode", instanceToAdd.VIVotingMode);
 
                 int rtnInstanceId = _ThisSQLAccessLayer.ExecuteScalar_CreateT(Properties.Settings.Default.TestConnectionString, insertScript, parameters);
 

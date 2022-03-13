@@ -305,6 +305,15 @@ namespace SBMMVotingSystem.Forms.SubForms
                             }
                         }
                     }
+                    else
+                    {
+                        ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = GetType().FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = "No data to report" };
+                        _ThisErrorManager.LogErrorMessage(error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please select a election", "Information");
                 }
             }
             catch (Exception ex)

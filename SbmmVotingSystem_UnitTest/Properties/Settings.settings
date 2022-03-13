@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="TestConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data Source=D:\OneDrives\OneDrive - 3SC Limited\Projects\OOP Coursework\SBMMVotingSystem_CW2\SBMMVotingSystem\DAL\SBMMVotingUnitTestDatabase.db;Version=3;</Value>
+      <Value Profile="(Default)">Data Source=E:\Projects\OOP Coursework\SBMMVotingSystem_CW2\SBMMVotingSystem\DAL\SBMMVotingUnitTestDatabase.db;Version=3;</Value>
     </Setting>
   </Settings>
 </SettingsFile>

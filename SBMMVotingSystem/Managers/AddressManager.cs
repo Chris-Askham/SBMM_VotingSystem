@@ -146,7 +146,7 @@ namespace SBMMVotingSystem.Managers
         /// Remove the address
         /// </summary>
         /// <param name="addressId">Instance that is to be removed</param>
-        public void DeleteThisAddress(int addressId)
+        internal void DeleteThisAddress(int addressId)
         {
             try
             {

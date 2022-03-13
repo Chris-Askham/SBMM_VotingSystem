@@ -39,11 +39,6 @@ namespace SBMMVotingSystem.Managers
         /// Collection of all known voting instances
         /// </summary>
         internal List<VotingInstanceViewModel> _allVotingInstances { get; set; }
-
-        /// <summary>
-        /// App is registered for this voting instance
-        /// </summary>
-        internal int CurrentInstanceId { get; set; }
         #endregion
 
         #region Constructor
@@ -442,35 +437,6 @@ namespace SBMMVotingSystem.Managers
         }
 
         /// <summary>
-        /// Calculate the winner for this election
-        /// </summary>
-        /// <param name="results">Results for this election</param>
-        private void CalculatedTheWinner(VotingInstanceViewModel election, List<VoteDBModel> results, ref string winner )
-        {
-            switch (election.VIVotingMode)
-            {
-                case VotingManager.VotingMode.FirstPassedThePost:
-                    // Winner is the person with the most votes
-                    // ----------------------------------------
-                    winner = _ThisSQLAccessLayer.GetFirstPastPostWinner(null, election);
-                    break;
-                case VotingManager.VotingMode.SingleTransferableVote:
-                    // Winner is the person that has the most rank 1 votes
-                    // ---------------------------------------------------
-                    winner = _ThisSQLAccessLayer.GetSupplementaryWinner(null, election);
-                    break;
-                case VotingManager.VotingMode.SupplementaryVote:
-                    // Winner is a candidate has over 50% of the votes
-                    // If not > 50% then Winner is the candidate who has the most rank 1 votes
-                    // -----------------------------------------------------------------------
-                    winner = _ThisSQLAccessLayer.GetSupplementaryVoteWinner(null, election);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
         /// Remove the selected name from the database
         /// </summary>
         /// <param name="optionName">Option to be deleted</param>
@@ -694,41 +660,6 @@ namespace SBMMVotingSystem.Managers
         }
 
         /// <summary>
-        /// Get the voting option for a specific option Id
-        /// </summary>
-        /// <param name="optionId">Option we are looking for</param>
-        /// <returns>voting option model populated with data from the database</returns>
-        internal VotingOptionDBModel GetVotingOptionFromDb(int optionId)
-        {
-            VotingOptionDBModel rtnModel = new VotingOptionDBModel();
-            try
-            {
-                string query = "SELECT * FROM [VotingOption] WHERE [VotingOptionId] = @VotingOptionId";
-                var parameters = new DynamicParameters();
-                parameters.Add("@VotingOptionId", optionId);
-                VotingOptionDBModel result = _ThisSQLAccessLayer.LoadVotingOptions(null, query, parameters).FirstOrDefault();
-
-                if (result != null)
-                {
-                    rtnModel = new VotingOptionDBModel()
-                    {
-                        VODescription = result.VODescription,
-                        VOName = result.VOName,
-                        VotingOptionId = optionId,
-                        VotingInstanceId = result.VotingInstanceId
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = GetType().FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
-                _ThisErrorManager.LogErrorMessage(error);
-            }
-
-            return rtnModel;
-        }
-
-        /// <summary>
         /// Add a new voting option to the database
         /// </summary>
         /// <param name="optionToAdd">Option to add</param>
@@ -804,6 +735,35 @@ namespace SBMMVotingSystem.Managers
             {
                 ErrorLogDBModel error = new ErrorLogDBModel() { ClassName = GetType().FullName, MethodName = MethodBase.GetCurrentMethod().Name, LoggedDatetimeUTC = DateTime.Now.ToString(), Exception = ex.Message };
                 _ThisErrorManager.LogErrorMessage(error);
+            }
+        }
+
+        /// <summary>
+        /// Calculate the winner for this election
+        /// </summary>
+        /// <param name="results">Results for this election</param>
+        private void CalculatedTheWinner(VotingInstanceViewModel election, List<VoteDBModel> results, ref string winner)
+        {
+            switch (election.VIVotingMode)
+            {
+                case VotingManager.VotingMode.FirstPassedThePost:
+                    // Winner is the person with the most votes
+                    // ----------------------------------------
+                    winner = _ThisSQLAccessLayer.GetFirstPastPostWinner(null, election);
+                    break;
+                case VotingManager.VotingMode.SingleTransferableVote:
+                    // Winner is the person that has the most rank 1 votes
+                    // ---------------------------------------------------
+                    winner = _ThisSQLAccessLayer.GetSupplementaryWinner(null, election);
+                    break;
+                case VotingManager.VotingMode.SupplementaryVote:
+                    // Winner is a candidate has over 50% of the votes
+                    // If not > 50% then Winner is the candidate who has the most rank 1 votes
+                    // -----------------------------------------------------------------------
+                    winner = _ThisSQLAccessLayer.GetSupplementaryVoteWinner(null, election);
+                    break;
+                default:
+                    break;
             }
         }
         #endregion

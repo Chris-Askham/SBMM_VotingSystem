@@ -30,7 +30,7 @@ namespace SbmmVotingSystem_UnitTest
         {
             try
             {
-                int langaugeId = 14;
+                int langaugeId = 19;
 
                 string testQuery = "SELECT * FROM [Language] WHERE [Id] = @Id";
                 var parameters = new DynamicParameters();
